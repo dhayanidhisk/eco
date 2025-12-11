@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eco Car Wash Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS & JS (for the interactive map) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        /* Apply the Poppins font family */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Custom style for the map container */
+        #map {
+            height: 280px; /* Slightly adjusted height */
+            width: 100%;
+            /* No border-radius here, it's on the parent */
+            z-index: 0;
+        }
+        /* Custom focus ring color to match Orange theme */
+        .focus\:ring-orange-500:focus {
+            --tw-ring-color: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen py-8 px-4">
+
+<div class="max-w-xl w-full mx-auto bg-white shadow-2xl rounded-2xl p-6 md:p-8">
+    <!-- Header Section with Logo -->
+    <div class="text-center mb-8">
+        <div class="inline-block mb-4">
+             <img src="https://i.postimg.cc/cJqVkzRb/b471e519141931d5-Y3-Jvc-Cwx-MDgw-LDg0-NCww-LDEx-Nw-Picsart-Ai-Image-Enhancer.png" alt="Anaamalais Logo" class="h-16 w-auto mx-auto">
+        </div>
+        <!-- CHANGED: Title color to text-orange-600 -->
+        <h1 class="text-3xl font-bold text-orange-600">Eco Car Wash Booking</h1>
+        <p class="text-slate-500 mt-1">Your convenient doorstep car cleaning service.</p>
+    </div>
+
+    <form id="bookingForm" class="space-y-5">
+        <!-- Input Group: Name -->
+        <div>
+            <label for="name" class="block text-sm font-medium text-slate-700">Full Name</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                </div>
+                <!-- CHANGED: Focus ring to orange -->
+                <input type="text" id="name" required class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="John Doe">
+            </div>
+        </div>
+
+        <!-- Input Group: Contact -->
+        <div>
+            <label for="contact" class="block text-sm font-medium text-slate-700">Contact Number</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
+                </div>
+                <!-- CHANGED: Focus ring to orange -->
+                <input type="tel" id="contact" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number" class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="9876543210">
+            </div>
+        </div>
+
+        <!-- Input Group: Car Model -->
+        <div>
+            <label for="carModel" class="block text-sm font-medium text-slate-700">Car Model</label>
+             <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.988 6.44a.75.75 0 01.556.92l-1.75 6.5a.75.75 0 01-1.02.502l-1.92-1.038a.75.75 0 010-1.33L15.988 6.44zM10 4a.75.75 0 01.75.75V7.5a.75.75 0 01-1.5 0V4.75A.75.75 0 0110 4zM4.012 6.44a.75.75 0 011.02.502l1.92 1.038a.75.75 0 010 1.33L3.452 13.86a.75.75 0 01-1.02-.503l-1.75-6.5a.75.75 0 01.556-.92L4.012 6.44z" clip-rule="evenodd" /></svg>
+                </div>
+                <!-- CHANGED: Focus ring to orange -->
+                <input type="text" id="carModel" placeholder="e.g., Toyota Fortuner" required class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <!-- Input Group: Date -->
+            <div>
+                <label for="appointmentDate" class="block text-sm font-medium text-slate-700">Appointment Date</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <!-- CHANGED: Focus ring to orange -->
+                    <input type="date" id="appointmentDate" required class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500">
+                </div>
+            </div>
+             <!-- Input Group: Time -->
+            <div>
+                <label for="time" class="block text-sm font-medium text-slate-700">Appointment Time</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.415L11 9.586V6z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <!-- CHANGED: Focus ring to orange -->
+                    <input type="time" id="time" required class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Location Section -->
+        <div>
+            <label for="manualAddress" class="block text-sm font-medium text-slate-700">Type Address to Search (Optional)</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                </div>
+                <!-- CHANGED: Focus ring to orange -->
+                <input type="text" id="manualAddress" placeholder="e.g., 123 Main St, Coimbatore" class="w-full pl-10 p-2.5 border-slate-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mb-3">
+            </div>
+
+            <label for="vehicleAddress" class="block text-sm font-medium text-slate-700">Final Service Address (from map)</label>
+            <p class="text-xs text-slate-500 mb-2">Move the map below or search above to confirm the location.</p>
+            <!-- CHANGED: Focus ring to orange -->
+            <input type="text" id="vehicleAddress" placeholder="Address will be auto-filled by the map" required class="w-full border-slate-300 rounded-md shadow-sm p-2.5 mb-3 focus:ring-orange-500 focus:border-orange-500 bg-slate-50" readonly>
+            
+            <div class="relative rounded-lg overflow-hidden shadow-sm mb-3">
+                <div id="map"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full z-[1000] pointer-events-none">
+                    <svg class="h-12 w-12 text-red-500 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <button type="button" onclick="getLocation()" class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-md shadow transition-colors duration-300">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                Use My Current Location
+            </button>
+
+            <!-- Hidden fields to store latitude and longitude -->
+            <input type="hidden" id="lat">
+            <input type="hidden" id="lng">
+        </div>
+
+        <!-- Submit Button -->
+        <!-- CHANGED: Gradient to Orange -->
+        <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 rounded-lg shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-105 duration-300 flex items-center justify-center gap-2">
+            Submit Booking
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+        </button>
+    </form>
+
+    <!-- Footer Section -->
+    <div class="text-center mt-8 text-xs text-slate-400">
+        <p>Powered by Anaamalais Digital Services</p>
+    </div>
+
+</div>
+
+<script>
+    // --- FEATURE: Prevent booking on past dates ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("appointmentDate").setAttribute('min', today);
+    });
+
+    // --- MAP INITIALIZATION ---
+    var map = L.map('map', {
+        zoomControl: true 
+    }).setView([11.0168, 76.9558], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // --- DEBOUNCERS FOR API CALLS ---
+    let mapMoveDebounceTimer;
+    let searchDebounceTimer;
+
+    // --- FEATURE: Reverse Geocoding (Coordinates -> Address) ---
+    function updateAddressFromLatLng(lat, lng) {
+        document.getElementById("vehicleAddress").value = "Fetching address...";
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+        
+        fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } })
+        .then(response => response.ok ? response.json() : Promise.reject(`Network response was not ok: ${response.statusText}`))
+        .then(data => {
+            document.getElementById("vehicleAddress").value = data?.display_name || "Address not found for this location.";
+        })
+        .catch(err => {
+            console.error("Error fetching address:", err);
+            document.getElementById("vehicleAddress").value = "Could not fetch address. Please check connection.";
+        });
+    }
+
+    // --- NEW FEATURE: Forward Geocoding (Address -> Coordinates) ---
+    function updateMapFromAddress() {
+        const address = document.getElementById("manualAddress").value;
+        if (address.length < 5) return; // Don't search for very short strings
+
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    map.setView([lat, lon], 17); // Zoom in closer for specific addresses
+                }
+            })
+            .catch(err => console.error("Error searching address:", err));
+    }
+    
+    // --- NEW: Event Listener for Manual Address Input ---
+    document.getElementById('manualAddress').addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(updateMapFromAddress, 750); // 750ms delay after user stops typing
+    });
+
+    // --- MAP EVENT: Update address when map panning stops (with debouncing) ---
+    map.on('moveend', function () {
+        clearTimeout(mapMoveDebounceTimer);
+        const center = map.getCenter();
+        document.getElementById("lat").value = center.lat;
+        document.getElementById("lng").value = center.lng;
+
+        mapMoveDebounceTimer = setTimeout(() => {
+            updateAddressFromLatLng(center.lat, center.lng);
+        }, 500); // 500ms delay after map movement stops
+    });
+
+    // --- FEATURE: Use Browser Geolocation ---
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => map.setView([position.coords.latitude, position.coords.longitude], 16),
+                (error) => {
+                    let errorMessage = "An unknown error occurred.";
+                    if(error.code === error.PERMISSION_DENIED) errorMessage = "Location access denied. Please check browser settings.";
+                    else if(error.code === error.POSITION_UNAVAILABLE) errorMessage = "Location information is unavailable.";
+                    else if(error.code === error.TIMEOUT) errorMessage = "Request for location timed out.";
+                    document.getElementById("vehicleAddress").value = errorMessage;
+                    console.warn("Geolocation Error:", error.message);
+                }
+            );
+        } else {
+            document.getElementById("vehicleAddress").value = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    // --- FORM SUBMISSION LOGIC ---
+    document.getElementById("bookingForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const contact = document.getElementById("contact").value;
+        const carModel = document.getElementById("carModel").value;
+        const date = document.getElementById("appointmentDate").value;
+        const time = document.getElementById("time").value;
+        const vehicleAddress = document.getElementById("vehicleAddress").value;
+        const manualAddress = document.getElementById("manualAddress").value;
+        const lat = document.getElementById("lat").value;
+        const lng = document.getElementById("lng").value;
+
+        const mapsLink = lat && lng ? `https://maps.google.com/?q=${lat},${lng}` : "";
+
+        const message = `*New Eco Car Wash Booking* 🚗💧\n\n` +
+            `*Customer Name:* ${name}\n` +
+            `*Contact:* ${contact}\n` +
+            `*Car Model:* ${carModel}\n` +
+            `*Date:* ${date}\n` +
+            `*Time:* ${time}\n\n` +
+            (manualAddress ? `*Searched Address:* ${manualAddress}\n` : "") +
+            `*Final Address (from map):* ${vehicleAddress}\n` +
+            (mapsLink ? `*Map Location:* ${mapsLink}\n` : "");
+
+        const phone = "919047447077";
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, "_blank");
+    });
+
+    // --- INITIALIZATION ---
+    (function(){
+        const initialCenter = map.getCenter();
+        document.getElementById("lat").value = initialCenter.lat;
+        document.getElementById("lng").value = initialCenter.lng;
+        updateAddressFromLatLng(initialCenter.lat, initialCenter.lng);
+    })();
+</script>
+
+</body>
+</html>
